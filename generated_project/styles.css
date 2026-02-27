@@ -1,0 +1,268 @@
+/*
+    Simple To-Do App Styles
+    ---------------------------------
+    This stylesheet defines the visual appearance for the Simple To-Do App.
+    It includes root variables, layout styling, component classes, responsive
+    adjustments, and smooth transition effects.
+*/
+
+/* ------------------------------------------------------------
+   Root Variables – colors, fonts, spacing
+   ------------------------------------------------------------ */
+:root {
+    /* Colors */
+    --color-primary: #2c3e50;          /* Dark blue‑gray */
+    --color-background: #f5f7fa;      /* Light neutral background */
+    --color-surface: #ffffff;          /* Card / app surface */
+    --color-text: #333333;            /* Primary text */
+    --color-muted: #777777;           /* Secondary / hint text */
+    --color-accent: #27ae60;          /* Success / completed */
+    --color-accent-hover: #1e8449;    /* Darker accent for hover */
+    --color-border: #e0e0e0;          /* Light border */
+
+    /* Typography */
+    --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-size-base: 1rem;            /* 16px */
+    --font-size-large: 1.25rem;        /* 20px */
+    --font-weight-regular: 400;
+    --font-weight-bold: 600;
+
+    /* Spacing */
+    --spacing-unit: 0.5rem;           /* 8px */
+    --spacing-sm: calc(var(--spacing-unit) * 1);
+    --spacing-md: calc(var(--spacing-unit) * 2);
+    --spacing-lg: calc(var(--spacing-unit) * 3);
+    --max-width: 600px;
+}
+
+/* ------------------------------------------------------------
+   Global Reset & Base Styles
+   ------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    background-color: var(--color-background);
+    line-height: 1.5;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* start so the app is near the top on large screens */
+    padding: var(--spacing-lg);
+}
+
+/* ------------------------------------------------------------
+   Layout – Centered App Container
+   ------------------------------------------------------------ */
+.todo-app {
+    width: 100%;
+    max-width: var(--max-width);
+    background-color: var(--color-surface);
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* ------------------------------------------------------------
+   Header
+   ------------------------------------------------------------ */
+.header {
+    text-align: center;
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+/* ------------------------------------------------------------
+   New Task Input Section
+   ------------------------------------------------------------ */
+.input-section {
+    display: flex;
+    justify-content: center;
+}
+
+.new-task {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.new-task:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(44,62,80,0.2);
+}
+
+/* ------------------------------------------------------------
+   Task List & Items
+   ------------------------------------------------------------ */
+.task-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.task-item {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Completion toggle – when .completed class is added */
+.task-item.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+    color: var(--color-muted);
+}
+
+/* ------------------------------------------------------------
+   Task Actions (Edit / Delete icons)
+   ------------------------------------------------------------ */
+.task-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    font-size: 1.2rem; /* increase clickable area */
+}
+
+.task-actions button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-muted);
+    transition: color 0.2s ease;
+    padding: var(--spacing-sm);
+}
+
+.task-actions button:hover {
+    color: var(--color-primary);
+}
+
+/* ------------------------------------------------------------
+   Footer – Filters & Clear Button
+   ------------------------------------------------------------ */
+.footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
+}
+
+.filters {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    padding: var(--spacing-xs, 0.25rem) var(--spacing-sm);
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.filter-btn.selected,
+.filter-btn[aria-pressed="true"] {
+    background-color: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.filter-btn:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+.clear-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-accent);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: var(--spacing-xs, 0.25rem) var(--spacing-sm);
+    transition: color 0.2s ease;
+}
+
+.clear-btn:hover {
+    color: var(--color-accent-hover);
+}
+
+/* ------------------------------------------------------------
+   Transitions for Adding / Removing Tasks
+   ------------------------------------------------------------ */
+.task-item {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* When a task is removed, JS can add a .removing class */
+.task-item.removing {
+    animation: fadeOut 0.2s ease forwards;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: scaleY(1); }
+    to { opacity: 0; transform: scaleY(0); height: 0; margin: 0; padding: 0; }
+}
+
+/* ------------------------------------------------------------
+   Responsive Adjustments (<600px)
+   ------------------------------------------------------------ */
+@media (max-width: 600px) {
+    .todo-app {
+        padding: var(--spacing-md);
+    }
+
+    .header {
+        font-size: 1.5rem;
+    }
+
+    .new-task {
+        font-size: 1rem;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .task-actions {
+        font-size: 1.5rem; /* larger tap targets */
+    }
+
+    .filter-btn,
+    .clear-btn {
+        font-size: 1rem;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+}
