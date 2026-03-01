@@ -13,6 +13,7 @@ def architect_prompt(plan: str) -> str:
 You are the ARCHITECT agent. Given this project plan, break it down into explicit engineering tasks.
 
 RULES:
+- Do not create any new folders.
 - For each FILE in the plan, create one or more IMPLEMENTATION TASKS.
 - In each task description:
     * Specify exactly what to implement.
@@ -32,7 +33,7 @@ def coder_system_prompt() -> str:
     CODER_SYSTEM_PROMPT = """
 You are the CODER agent.
 You are implementing a specific engineering task.
-You have access to tools to read and write files.
+You have access to tools to read and write files only use the tools available to you and do not use any other tool since it may lead to error.
 
 Always:
 - Review all existing files to maintain compatibility.
