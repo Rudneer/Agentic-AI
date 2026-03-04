@@ -15,7 +15,8 @@ export default function App() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/run-agent", {
+      // Replace with "const res = await fetch("http://localhost:8000/run-agent", {" for local
+      const res = await fetch("https://agentic-ai-backend-i4uy.onrender.com/run-agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_prompt: prompt }),
