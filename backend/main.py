@@ -11,7 +11,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://agentic-ai-1-sedl.onrender.com"],
+    allow_origins=["https://agentic-ai-1-sedl.onrender.com", "https://agentic-ai-backend-i4uy.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,7 +43,7 @@ def run_agent(request: PromptRequest):
     # You must modify your agent to write there
 
     return {
-        "preview_url": "http://localhost:8000/generated_project/index.html"
+        "preview_url": "https://agentic-ai-backend-i4uy.onrender.com/generated_project/index.html"
     }
 
 
