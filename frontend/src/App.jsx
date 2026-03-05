@@ -62,7 +62,7 @@ export default function App() {
         <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-zinc-700">
           {messages.length === 0 && (
             <div className="text-zinc-500 text-sm">
-              Try: "Build a modern todo app with animations"
+              Try: "Build a modern todo app with colourful UI"
             </div>
           )}
 
@@ -80,8 +80,11 @@ export default function App() {
           ))}
 
           {loading && (
-            <div className="bg-zinc-800 px-4 py-3 rounded-2xl text-sm border border-white/10 animate-pulse">
-              Building your app...
+            <div className="bg-zinc-800 px-4 py-4 rounded-2xl text-sm border border-white/10 animate-pulse flex flex-col gap-1">
+              <span className="font-medium">✨ Hang tight! We're building your app...</span>
+              <span className="text-zinc-400 text-xs">
+                It usually takes a minute or two. Feel free to sit back while the magic happens.
+              </span>
             </div>
           )}
         </div>
