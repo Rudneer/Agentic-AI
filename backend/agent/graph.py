@@ -14,7 +14,7 @@ _ = load_dotenv()
 set_debug(True)
 set_verbose(True)
 
-llm = ChatGroq(model="openai/gpt-oss-120b")
+llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0)
 
 
 def planner_agent(state: dict) -> dict:
@@ -43,7 +43,8 @@ def architect_agent(state: dict) -> dict:
 
 
 def coder_agent(state: dict) -> dict:
-    """LangGraph tool-using coder agent."""
+    """LangGraph tool-using coder agent with retry protection."""
+
     coder_state: CoderState = state.get("coder_state")
     if coder_state is None:
         coder_state = CoderState(task_plan=state["task_plan"], current_step_idx=0)
@@ -53,23 +54,56 @@ def coder_agent(state: dict) -> dict:
         return {"coder_state": coder_state, "status": "DONE"}
 
     current_task = steps[coder_state.current_step_idx]
-    existing_content = read_file.run(current_task.filepath)
+
+    existing_content = ""
+    try:
+        existing_content = read_file.run(current_task.filepath)
+    except Exception:
+        existing_content = ""
 
     system_prompt = coder_system_prompt()
+
     user_prompt = (
         f"Task: {current_task.task_description}\n"
         f"File: {current_task.filepath}\n"
         f"Existing content:\n{existing_content}\n"
-        "Use write_file(path, content) to save your changes."
+        "Use only the available tools to complete the task."
     )
 
     coder_tools = [read_file, write_file, list_file, get_current_directory]
+
     react_agent = create_react_agent(llm, coder_tools)
 
-    react_agent.invoke({"messages": [{"role": "system", "content": system_prompt},
-                                     {"role": "user", "content": user_prompt}]})
+    MAX_RETRIES = 3
+
+    for attempt in range(MAX_RETRIES):
+        try:
+
+            react_agent.invoke({
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ]
+            })
+
+            break
+
+        except Exception as e:
+
+            print(f"Coder attempt {attempt+1} failed:", e)
+
+            user_prompt += (
+                "\n\nIMPORTANT: You must ONLY use these tools:\n"
+                "read_file, write_file, list_file, get_current_directory.\n"
+                "Do NOT call any other tool."
+            )
+
+            if attempt == MAX_RETRIES - 1:
+                print("Skipping step due to repeated failure.")
+                break
 
     coder_state.current_step_idx += 1
+
     return {"coder_state": coder_state}
 
 
@@ -93,3 +127,34 @@ if __name__ == "__main__":
     result = agent.invoke({"user_prompt": "Build a colourful modern todo app in html css and js"},
                           {"recursion_limit": 100})
     print("Final State:", result)
+
+
+# def coder_agent(state: dict) -> dict:
+#     """LangGraph tool-using coder agent."""
+#     coder_state: CoderState = state.get("coder_state")
+#     if coder_state is None:
+#         coder_state = CoderState(task_plan=state["task_plan"], current_step_idx=0)
+
+#     steps = coder_state.task_plan.implementation_steps
+#     if coder_state.current_step_idx >= len(steps):
+#         return {"coder_state": coder_state, "status": "DONE"}
+
+#     current_task = steps[coder_state.current_step_idx]
+#     existing_content = read_file.run(current_task.filepath)
+
+#     system_prompt = coder_system_prompt()
+#     user_prompt = (
+#         f"Task: {current_task.task_description}\n"
+#         f"File: {current_task.filepath}\n"
+#         f"Existing content:\n{existing_content}\n"
+#         "Use write_file(path, content) to save your changes."
+#     )
+
+#     coder_tools = [read_file, write_file, list_file, get_current_directory]
+#     react_agent = create_react_agent(llm, coder_tools)
+
+#     react_agent.invoke({"messages": [{"role": "system", "content": system_prompt},
+#                                      {"role": "user", "content": user_prompt}]})
+
+#     coder_state.current_step_idx += 1
+#     return {"coder_state": coder_state}
